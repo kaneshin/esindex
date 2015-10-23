@@ -86,7 +86,7 @@ $ esindex create my_index --url http://127.0.0.1:9200 --mappings '
     }
 }
 '
-my_index -> my_index_20151024000500
+my_index_20151024000500 <- my_index
 
 
 $ esindex create my_index --url http://127.0.0.1:9200 --mappings '
@@ -99,6 +99,9 @@ $ esindex create my_index --url http://127.0.0.1:9200 --mappings '
                 },
                 "name": {
                     "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
                 }
             }
         }
@@ -109,15 +112,15 @@ my_index_20151025111000
 
 
 $ esindex list my_index --url http://127.0.0.1:9200
-my_index -> my_index_20151024000500
-            my_index_20151025111000
+my_index_20151024000500 <- my_index
+my_index_20151025111000
 
 
 $ esindex alias my_index_20151025111000 --url http://127.0.0.1:9200
-my_index -> my_index_20151025111000
+my_index_20151025111000 <- my_index
 
 
 $ esindex list my_index --url http://127.0.0.1:9200
-            my_index_20151024000500
-my_index -> my_index_20151025111000
+my_index_20151024000500
+my_index_20151025111000 <- my_index
 ```
