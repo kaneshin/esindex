@@ -1,0 +1,31 @@
+{
+    "settings": {
+        "index":{
+            "analysis":{
+                "tokenizer" : {
+                    "kuromoji" : {
+                        "type" : "kuromoji_tokenizer"
+                    }
+                },
+                "analyzer" : {
+                    "analyzer" : {
+                        "type" : "custom",
+                        "tokenizer" : "kuromoji"
+                    }
+                }
+            }
+        }
+    },
+    "mappings": {
+        "articles": {
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
