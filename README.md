@@ -146,3 +146,13 @@ $ esindex list my_index --url http://127.0.0.1:9200
 my_index_v20151024000500
 my_index_v20151025111000 <- my_index
 ```
+
+
+## License
+
+[The MIT License (MIT)](http://kaneshin.mit-license.org/)
+
+
+## Author
+
+Shintaro Kaneko <kaneshin0120@gmail.com>
