@@ -18,13 +18,13 @@ esindex create my_index --url http://127.0.0.1:9200 --mappings '{...mappings...}
 ```
 
 ```
-curl -XPUT http://127.0.0.1:9200/my_index_20060102150405 -d '{...mappings...}'
+curl -XPUT http://127.0.0.1:9200/my_index_v20060102150405 -d '{...mappings...}'
 curl -XPOST http://127.0.0.1:9200/_aliases -d '
 {
     "actions": [{
         "add": {
             "alias": "my_index",
-            "index": "my_index_20060102150405"
+            "index": "my_index_v20060102150405"
         }}
     ]
 }
@@ -45,7 +45,7 @@ esindex list my_index --url http://127.0.0.1:9200
 Change the my_index alias to point to the given name.
 
 ```
-esindex alias my_index_20091110230000 --url http://127.0.0.1:9200
+esindex alias my_index_v20091110230000 --url http://127.0.0.1:9200
 ```
 
 ```
@@ -54,12 +54,12 @@ curl -XPOST http://127.0.0.1:9200/_aliases -d '
     "actions": [{
         "remove": {
             "alias": "my_index",
-            "index": "my_index_20060102150405"
+            "index": "my_index_v20060102150405"
         }
     }, {
         "add": {
             "alias": "my_index",
-            "index": "my_index_20091110230000"
+            "index": "my_index_v20091110230000"
         }
     }]
 }
@@ -86,7 +86,7 @@ $ esindex create my_index --url http://127.0.0.1:9200 --mappings '
     }
 }
 '
-my_index_20151024000500 <- my_index
+my_index_v20151024000500 <- my_index
 
 
 $ esindex create my_index --url http://127.0.0.1:9200 --mappings '
@@ -108,19 +108,19 @@ $ esindex create my_index --url http://127.0.0.1:9200 --mappings '
     }
 }
 '
-my_index_20151025111000
+my_index_v20151025111000
 
 
 $ esindex list my_index --url http://127.0.0.1:9200
-my_index_20151024000500 <- my_index
-my_index_20151025111000
+my_index_v20151024000500 <- my_index
+my_index_v20151025111000
 
 
-$ esindex alias my_index_20151025111000 --url http://127.0.0.1:9200
-my_index_20151025111000 <- my_index
+$ esindex alias my_index_v20151025111000 --url http://127.0.0.1:9200
+my_index_v20151025111000 <- my_index
 
 
 $ esindex list my_index --url http://127.0.0.1:9200
-my_index_20151024000500
-my_index_20151025111000 <- my_index
+my_index_v20151024000500
+my_index_v20151025111000 <- my_index
 ```
