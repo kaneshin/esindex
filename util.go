@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	versionFormat = "2006150405"
+	versionFormat = "20060102150405"
 )
 
 func indexNameFromAliasName(aliasName string) string {

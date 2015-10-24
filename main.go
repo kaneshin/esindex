@@ -23,6 +23,8 @@ var commands = []Command{
 	NewCreate(),
 	NewAlias(),
 	NewList(),
+	NewMappings(),
+	NewSettings(),
 }
 
 func main() {
