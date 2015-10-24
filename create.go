@@ -1,25 +1,26 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/kaneshin/esindex/elasticsearch"
 )
 
 type Create struct {
+	mappings *string
 }
 
 func NewCreate() *Create {
-	return &Create{}
+	return &Create{
+		mappings: cmdFlag.String("mappings", "", ""),
+	}
 }
 
-const (
-	versionFormat = "2006150405"
-)
-
 func (cmd *Create) Run(args []string) error {
-	mappings := cmdFlag.String("mappings", "", "")
 	if len(args) < 1 {
 		cmd.Usage(os.Stdout)
 		return nil
@@ -28,51 +29,30 @@ func (cmd *Create) Run(args []string) error {
 	indexName := indexNameFromAliasName(aliasName)
 	cmdFlag.Parse(args[1:])
 
-	req := NewRequest("PUT", indexName, strings.NewReader(*mappings))
-	result, err := DefaultClient.Do(req)
+	client := elasticsearch.NewClient(
+		elasticsearch.NewConfig().WithURL(*urlStr),
+	)
+
+	req := elasticsearch.NewRequest("PUT", indexName, strings.NewReader(*cmd.mappings))
+	res, err := client.Do(req)
 	if err != nil {
 		return err
 	}
-	if v, ok := result["acknowledged"].(bool); ok && v {
-		has := func(aliasName string) bool {
-			req = NewRequest("GET", "_aliases", nil)
-			result, err := DefaultClient.Do(req)
-			if err != nil {
-				return true
-			}
-			for _, idx := range result {
-				if idx, ok := idx.(map[string]interface{}); ok {
-					if aliases, ok := idx["aliases"].(map[string]interface{}); ok {
-						for alias := range aliases {
-							if alias == aliasName {
-								return true
-							}
-						}
-					}
-				}
-			}
-			return false
-		}(aliasName)
-		if !has {
-			var d = `{
-                "actions": [{
-                    "add": {
-                        "alias": "` + aliasName + `",
-                        "index": "` + indexName + `"
-                    }}
-                    ]
-                }`
-			req = NewRequest("POST", "_aliases", strings.NewReader(d))
-			result, err := DefaultClient.Do(req)
-			if err != nil {
+
+	if v, ok := res["acknowledged"].(bool); ok && v {
+		_, aliased := indexNamesAndAliasedIndexByAliasName(client, aliasName)
+		if len(aliased) == 0 {
+			if err := makeAlias(client, aliasName, indexName); err != nil {
 				return err
 			}
-			if v, ok := result["acknowledged"].(bool); ok && v {
-				fmt.Printf("%s <- %s\n", indexName, aliasName)
-				return nil
-			}
+			fmt.Printf("%s <- %s\n", indexName, aliasName)
+			return nil
 		}
 		fmt.Printf("%s\n", indexName)
+	}
+
+	if v, ok := res["error"].(string); ok && len(v) > 0 {
+		return errors.New(v)
 	}
 
 	return nil
@@ -83,5 +63,5 @@ func (cmd *Create) Name() string {
 }
 
 func (cmd *Create) Usage(w io.Writer) {
-	fmt.Fprintf(w, "%-8s%10s %s\n", cmd.Name(), "<alias-name>", "[options]")
+	fmt.Fprintf(w, "%-8s%10s %s", cmd.Name(), "<alias-name>", "[options]")
 }

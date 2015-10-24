@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/kaneshin/esindex/elasticsearch"
 )
 
 type List struct {
@@ -21,26 +23,17 @@ func (cmd *List) Run(args []string) error {
 	aliasName := args[0]
 	cmdFlag.Parse(args[1:])
 
-	req := NewRequest("GET", "_aliases", nil)
-	result, err := DefaultClient.Do(req)
-	if err != nil {
-		return err
-	}
-	for idxName, idx := range result {
-		if aliasNameFromIndexName(idxName) != aliasName {
-			continue
+	client := elasticsearch.NewClient(
+		elasticsearch.NewConfig().WithURL(*urlStr),
+	)
+
+	indices, aliased := indexNamesAndAliasedIndexByAliasName(client, aliasName)
+	for _, index := range indices {
+		fmt.Printf("%s", index)
+		if aliased[index] {
+			fmt.Printf(" <- %s", aliasName)
 		}
-		fmt.Printf("%s", idxName)
-		if idx, ok := idx.(map[string]interface{}); ok {
-			if aliases, ok := idx["aliases"].(map[string]interface{}); ok {
-				for alias := range aliases {
-					if alias == aliasName {
-						fmt.Printf(" <- %s", aliasName)
-					}
-				}
-			}
-		}
-		fmt.Print("\n")
+		fmt.Println("")
 	}
 
 	return nil
