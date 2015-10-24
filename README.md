@@ -67,6 +67,28 @@ curl -XPOST http://127.0.0.1:9200/_aliases -d '
 ```
 
 
+### Mappings
+
+```
+esindex mappings my_index_v20091110230000 --url http://127.0.0.1:9200
+```
+
+```
+curl -XGET http://127.0.0.1:9200/my_index_v20091110230000/_mappings
+```
+
+
+### Settings
+
+```
+esindex settings my_index_v20091110230000 --url http://127.0.0.1:9200
+```
+
+```
+curl -XGET http://127.0.0.1:9200/my_index_v20091110230000/_settings
+```
+
+
 ## Tutorial
 
 ```
